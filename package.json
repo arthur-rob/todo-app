@@ -8,7 +8,8 @@
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.vue\"",
-    "lint": "eslint --ext .ts,.vue src"
+    "lint": "eslint --ext .ts,.vue src",
+    "prepare": "husky"
   },
   "dependencies": {
     "axios": "^1.9.0",
