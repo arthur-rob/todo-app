@@ -74,6 +74,7 @@
             </v-form>
             <template #actions>
                 <v-btn
+                    :loading="isLoading"
                     variant="tonal"
                     color="primary"
                     @click="handleCreateAccount"
@@ -97,15 +98,20 @@ import {
     isPasswordLongEnough,
     isStringValid,
 } from '../lib/Validators'
+import { useRouter } from 'vue-router'
+import { useIndexStore } from '../store'
 import type { AccountCreate } from '../types/Account'
 import type { VForm } from 'vuetify/components'
 
+const router = useRouter()
+const indexStore = useIndexStore()
 const newAccountForm = reactive<AccountCreate>({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
 })
+const isLoading = ref(false)
 const isPasswordVisible = ref(false)
 const confirmEmail = ref<string>('')
 const confirmPassword = ref<string>('')
@@ -119,11 +125,26 @@ const isPasswordConfirmed = computed(() => {
 const handleCreateAccount = async () => {
     const formValidation = await accountForm.value?.validate()
     if (!formValidation?.valid) return
+    isLoading.value = true
     try {
-        const response = await Api.post('/users', newAccountForm)
-        console.log(response.data)
+        await Api.post('/users', newAccountForm)
+        indexStore.snackbarConfig = {
+            message: 'Account Created !',
+            type: 'success',
+            display: true,
+        }
+        router.push('/')
     } catch (error) {
-        console.error('Error creating account:', error)
+        const errorMessage =
+            error.response?.data?.message ||
+            'An error occurred, try again later'
+        indexStore.snackbarConfig = {
+            message: errorMessage,
+            type: 'error',
+            display: true,
+        }
+    } finally {
+        isLoading.value = false
     }
 }
 </script>

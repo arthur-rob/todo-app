@@ -28,7 +28,12 @@
                 ></v-text-field>
             </v-form>
             <template #actions>
-                <v-btn variant="tonal" color="primary" @click="handleLogin">
+                <v-btn
+                    variant="tonal"
+                    color="primary"
+                    :loading="isLoading"
+                    @click="handleLogin"
+                >
                     Login
                 </v-btn>
             </template>
@@ -45,8 +50,10 @@ import { ref } from 'vue'
 import InputCard from '../components/InputCard.vue'
 import { isStringValid } from '../lib/Validators'
 import type { VForm } from 'vuetify/components'
-
+import { useIndexStore } from '../store'
+const indexStore = useIndexStore()
 const isPasswordVisible = ref(false)
+const isLoading = ref(false)
 const loginForm = ref<VForm>()
 const email = ref('')
 const password = ref('')
@@ -54,6 +61,7 @@ const password = ref('')
 const handleLogin = async () => {
     const formValidation = await loginForm.value?.validate()
     if (!formValidation?.valid) return
+    isLoading.value = true
     const loginData = {
         email: email.value,
         password: password.value,
@@ -64,8 +72,14 @@ const handleLogin = async () => {
             console.log('Login successful:', response.data)
             // Redirect to the dashboard or home page
         }
-    } catch (error) {
-        console.error('Login failed:', error)
+    } catch {
+        indexStore.snackbarConfig = {
+            display: true,
+            message: 'Login failed. Please check your credentials.',
+            type: 'error',
+        }
+    } finally {
+        isLoading.value = false
     }
 }
 </script>
