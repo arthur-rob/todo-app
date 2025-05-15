@@ -45,13 +45,17 @@
     </div>
 </template>
 <script setup lang="ts">
-import Api from '../lib/Api'
 import { ref } from 'vue'
 import InputCard from '../components/InputCard.vue'
 import { isStringValid } from '../lib/Validators'
 import type { VForm } from 'vuetify/components'
 import { useIndexStore } from '../store'
+import { useAuthStore } from '../store/auth'
+import { useRouter } from 'vue-router'
+
 const indexStore = useIndexStore()
+const authStore = useAuthStore()
+const router = useRouter()
 const isPasswordVisible = ref(false)
 const isLoading = ref(false)
 const loginForm = ref<VForm>()
@@ -62,24 +66,15 @@ const handleLogin = async () => {
     const formValidation = await loginForm.value?.validate()
     if (!formValidation?.valid) return
     isLoading.value = true
-    const loginData = {
-        email: email.value,
-        password: password.value,
-    }
-    try {
-        const response = await Api.post('/login', loginData)
-        if (response.status === 200) {
-            console.log('Login successful:', response.data)
-            // Redirect to the dashboard or home page
-        }
-    } catch {
+    const success = await authStore.login(email.value, password.value)
+    isLoading.value = false
+    if (success) router.push({ name: 'dashboard' })
+    else {
         indexStore.snackbarConfig = {
             display: true,
             message: 'Login failed. Please check your credentials.',
             type: 'error',
         }
-    } finally {
-        isLoading.value = false
     }
 }
 </script>

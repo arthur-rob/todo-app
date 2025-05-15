@@ -100,12 +100,12 @@ import {
 } from '../lib/Validators'
 import { useRouter } from 'vue-router'
 import { useIndexStore } from '../store'
-import type { AccountCreate } from '../types/Account'
+import type { UserCreate } from '../../types/User'
 import type { VForm } from 'vuetify/components'
 
 const router = useRouter()
 const indexStore = useIndexStore()
-const newAccountForm = reactive<AccountCreate>({
+const newAccountForm = reactive<UserCreate>({
     firstName: '',
     lastName: '',
     email: '',
