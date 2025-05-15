@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 
+type SnackbarType = 'info' | 'success' | 'error' | 'warning'
 interface SnackbarConfig {
     display: boolean
     message: string
-    type: 'info' | 'success' | 'error'
+    type: SnackbarType
 }
 
 export const useIndexStore = defineStore('index', () => {
@@ -14,7 +15,16 @@ export const useIndexStore = defineStore('index', () => {
         type: 'info',
     })
 
+    const displaySnackBar = (
+        message: string,
+        type: SnackbarType = 'success'
+    ): void => {
+        snackbarConfig.message = message
+        snackbarConfig.type = type
+        snackbarConfig.display = true
+    }
     return {
         snackbarConfig,
+        displaySnackBar,
     }
 })

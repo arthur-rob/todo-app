@@ -59,8 +59,8 @@ const router = useRouter()
 const isPasswordVisible = ref(false)
 const isLoading = ref(false)
 const loginForm = ref<VForm>()
-const email = ref('')
-const password = ref('')
+const email = ref('arthur.ro923@gmail.com')
+const password = ref('N4G@Qb7bR3Hq5D@y')
 
 const handleLogin = async () => {
     const formValidation = await loginForm.value?.validate()
@@ -70,11 +70,10 @@ const handleLogin = async () => {
     isLoading.value = false
     if (success) router.push({ name: 'dashboard' })
     else {
-        indexStore.snackbarConfig = {
-            display: true,
-            message: 'Login failed. Please check your credentials.',
-            type: 'error',
-        }
+        indexStore.displaySnackBar(
+            'Login failed. Please check your credentials.',
+            'error'
+        )
     }
 }
 </script>
