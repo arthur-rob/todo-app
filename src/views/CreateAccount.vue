@@ -2,7 +2,7 @@
     <div class="d-flex flex-column align-center justify-center h-screen">
         <InputCard>
             <h2 class="pb-4">Create Account</h2>
-            <v-form @submit.prevent ref="accountForm" class="my-4">
+            <v-form ref="accountForm" class="my-4" @submit.prevent>
                 <v-text-field
                     v-model="newAccountForm.firstName"
                     variant="outlined"
@@ -53,8 +53,8 @@
                     :append-inner-icon="
                         isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'
                     "
-                    @click:append-inner="isPasswordVisible = !isPasswordVisible"
                     required
+                    @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 >
                 </v-text-field>
                 <v-text-field
@@ -67,8 +67,8 @@
                     :append-inner-icon="
                         isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'
                     "
-                    @click:append-inner="isPasswordVisible = !isPasswordVisible"
                     required
+                    @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 >
                 </v-text-field>
                 <div class="btn-aligner d-flex justify-end my-4">
