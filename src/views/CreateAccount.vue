@@ -1,46 +1,88 @@
 <template>
-    <div class="create-account-wrapper">
-        <h2>Create Account</h2>
-        <v-form>
-            <v-text-field
-                v-model="newAccountForm.firstName"
-                label="First Name"
-                required
-            />
-            <v-text-field
-                v-model="newAccountForm.lastName"
-                label="Last Name"
-                required
-            />
-            <v-text-field
-                v-model="newAccountForm.email"
-                label="Email"
-                required
-            ></v-text-field>
-            <v-text-field
-                v-model="confirmEmail"
-                label="confirm Email"
-                required
-            ></v-text-field>
-            <v-text-field
-                v-model="newAccountForm.password"
-                label="Password"
-                type="password"
-                required
-            ></v-text-field>
-            <v-text-field
-                v-model="confirmPassword"
-                label="Confirm Password"
-                type="password"
-                required
-            ></v-text-field>
-            <v-btn
-                @click="handleCreateAccount"
-                :disabled="!isEmailConfirmed || !isPasswordConfirmed"
-                >Create Account</v-btn
-            >
-        </v-form>
-        <p>
+    <div class="d-flex flex-column align-center justify-center h-screen">
+        <InputCard>
+            <h2 class="pb-4">Create Account</h2>
+            <v-form @submit.prevent ref="accountForm" class="my-4">
+                <v-text-field
+                    v-model="newAccountForm.firstName"
+                    variant="outlined"
+                    density="compact"
+                    label="First Name"
+                    :rules="[
+                        (v) => isStringValid(v) || 'First Name is required',
+                    ]"
+                    required
+                />
+                <v-text-field
+                    v-model="newAccountForm.lastName"
+                    variant="outlined"
+                    density="compact"
+                    label="Last Name"
+                    required
+                />
+                <v-text-field
+                    v-model="newAccountForm.email"
+                    variant="outlined"
+                    density="compact"
+                    label="Email"
+                    :rules="[(v) => isEmailValid(v) || 'Email is required']"
+                    required
+                >
+                </v-text-field>
+                <v-text-field
+                    v-model="confirmEmail"
+                    variant="outlined"
+                    density="compact"
+                    label="confirm Email"
+                    :rules="[isEmailConfirmed || 'Email mismatch']"
+                    required
+                >
+                </v-text-field>
+                <v-text-field
+                    v-model="newAccountForm.password"
+                    variant="outlined"
+                    density="compact"
+                    label="Password"
+                    hint="Password must be at least 8 characters long"
+                    :type="isPasswordVisible ? 'text' : 'password'"
+                    :rules="[
+                        isPasswordLongEnough ||
+                            'Password must be at least 8 characters long',
+                        isStringValid || 'Password is required',
+                    ]"
+                    :append-inner-icon="
+                        isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'
+                    "
+                    @click:append-inner="isPasswordVisible = !isPasswordVisible"
+                    required
+                >
+                </v-text-field>
+                <v-text-field
+                    v-model="confirmPassword"
+                    variant="outlined"
+                    density="compact"
+                    label="Confirm Password"
+                    :type="isPasswordVisible ? 'text' : 'password'"
+                    :rules="[isPasswordConfirmed || 'password mismatch']"
+                    :append-inner-icon="
+                        isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'
+                    "
+                    @click:append-inner="isPasswordVisible = !isPasswordVisible"
+                    required
+                >
+                </v-text-field>
+                <div class="btn-aligner d-flex justify-end my-4">
+                    <v-btn
+                        variant="tonal"
+                        color="primary"
+                        @click="handleCreateAccount"
+                    >
+                        Create Account
+                    </v-btn>
+                </div>
+            </v-form>
+        </InputCard>
+        <p class="ma-2">
             Already have an account ? Go to
             <router-link to="/">Login</router-link>
         </p>
@@ -49,7 +91,14 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import Api from '../lib/Api'
+import InputCard from '../components/InputCard.vue'
+import {
+    isEmailValid,
+    isPasswordLongEnough,
+    isStringValid,
+} from '../lib/Validators'
 import type { AccountCreate } from '../types/Account'
+import type { VForm } from 'vuetify/components'
 
 const newAccountForm = reactive<AccountCreate>({
     firstName: '',
@@ -57,34 +106,24 @@ const newAccountForm = reactive<AccountCreate>({
     email: '',
     password: '',
 })
-
+const isPasswordVisible = ref(false)
 const confirmEmail = ref<string>('')
 const confirmPassword = ref<string>('')
-
+const accountForm = ref<VForm>()
 const isEmailConfirmed = computed(() => {
     return newAccountForm.email === confirmEmail.value
 })
 const isPasswordConfirmed = computed(() => {
     return newAccountForm.password === confirmPassword.value
 })
-const handleCreateAccount = () => {
-    // Handle create account logic here
-    if (newAccountForm.email !== confirmEmail.value) {
-        alert('Emails do not match')
-        return
+const handleCreateAccount = async () => {
+    const formValidation = await accountForm.value?.validate()
+    if (!formValidation?.valid) return
+    try {
+        const response = await Api.post('/users', newAccountForm)
+        console.log(response.data)
+    } catch (error) {
+        console.error('Error creating account:', error)
     }
-    if (newAccountForm.password !== confirmPassword.value) {
-        alert('Passwords do not match')
-        return
-    }
-    Api.post('/users', newAccountForm)
-        .then((response) => {
-            console.log('Account created successfully', response)
-            // Redirect to login or home page
-        })
-        .catch((error) => {
-            console.error('Error creating account', error)
-            alert('Error creating account')
-        })
 }
 </script>
