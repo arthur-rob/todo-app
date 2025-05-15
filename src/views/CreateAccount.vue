@@ -46,9 +46,9 @@
                     hint="Password must be at least 8 characters long"
                     :type="isPasswordVisible ? 'text' : 'password'"
                     :rules="[
-                        isPasswordLongEnough ||
+                        (v) =>
+                            isPasswordLongEnough(v) ||
                             'Password must be at least 8 characters long',
-                        isStringValid || 'Password is required',
                     ]"
                     :append-inner-icon="
                         isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'
@@ -63,7 +63,7 @@
                     density="compact"
                     label="Confirm Password"
                     :type="isPasswordVisible ? 'text' : 'password'"
-                    :rules="[isPasswordConfirmed || 'password mismatch']"
+                    :rules="[isPasswordConfirmed || 'Password mismatch']"
                     :append-inner-icon="
                         isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'
                     "
@@ -71,16 +71,17 @@
                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 >
                 </v-text-field>
-                <div class="btn-aligner d-flex justify-end my-4">
-                    <v-btn
-                        variant="tonal"
-                        color="primary"
-                        @click="handleCreateAccount"
-                    >
-                        Create Account
-                    </v-btn>
-                </div>
             </v-form>
+            <template #actions>
+                <v-btn
+                    :loading="isLoading"
+                    variant="tonal"
+                    color="primary"
+                    @click="handleCreateAccount"
+                >
+                    Create Account
+                </v-btn>
+            </template>
         </InputCard>
         <p class="ma-2">
             Already have an account ? Go to
@@ -97,15 +98,20 @@ import {
     isPasswordLongEnough,
     isStringValid,
 } from '../lib/Validators'
-import type { AccountCreate } from '../types/Account'
+import { useRouter } from 'vue-router'
+import { useIndexStore } from '../store'
+import type { UserCreate } from '../../types/User'
 import type { VForm } from 'vuetify/components'
 
-const newAccountForm = reactive<AccountCreate>({
+const router = useRouter()
+const indexStore = useIndexStore()
+const newAccountForm = reactive<UserCreate>({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
 })
+const isLoading = ref(false)
 const isPasswordVisible = ref(false)
 const confirmEmail = ref<string>('')
 const confirmPassword = ref<string>('')
@@ -119,11 +125,26 @@ const isPasswordConfirmed = computed(() => {
 const handleCreateAccount = async () => {
     const formValidation = await accountForm.value?.validate()
     if (!formValidation?.valid) return
+    isLoading.value = true
     try {
-        const response = await Api.post('/users', newAccountForm)
-        console.log(response.data)
+        await Api.post('/users', newAccountForm)
+        indexStore.snackbarConfig = {
+            message: 'Account Created !',
+            type: 'success',
+            display: true,
+        }
+        router.push('/')
     } catch (error) {
-        console.error('Error creating account:', error)
+        const errorMessage =
+            error.response?.data?.message ||
+            'An error occurred, try again later'
+        indexStore.snackbarConfig = {
+            message: errorMessage,
+            type: 'error',
+            display: true,
+        }
+    } finally {
+        isLoading.value = false
     }
 }
 </script>
