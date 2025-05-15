@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.vue\"",
     "lint": "eslint --ext .ts,.vue src",
+    "lint:fix": "eslint --ext .ts,.vue src --fix",
     "prepare": "husky"
   },
   "dependencies": {
