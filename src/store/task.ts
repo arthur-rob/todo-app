@@ -29,7 +29,10 @@ export const useTaskStore = defineStore('task', () => {
     const updateTask = async (task: Task): Promise<Task | undefined> => {
         try {
             const response = await Api.patch(`/task/${task.id}`, task)
-            myTasks.push(response.data)
+            const taskIndex = myTasks.findIndex((t) => t.id === task.id)
+            if (taskIndex !== -1) {
+                myTasks[taskIndex] = response.data
+            }
             return response.data
         } catch (error) {
             console.error('Error creating task:', error)

@@ -32,27 +32,25 @@
             variant="outlined"
             density="compact"
             color="primary"
-            />
-        <v-date-input 
+        />
+        <v-date-input
             v-model="taskToEdit.expireAt"
             density="compact"
             variant="outlined"
-            label="Date" />
+            label="Date"
+        />
     </v-form>
 
     <v-divider></v-divider>
     <div class="d-flex align-center justify-end pa-2">
-        <v-btn
-            class="ma-2"
-            @click="resetTaskForm">
-            close
-        </v-btn>
+        <v-btn class="ma-2" @click="resetTaskForm"> close </v-btn>
         <v-btn
             class="ma-2"
             color="primary"
             :loading="isLoading"
-            @click="validForm">
-            {{  taskToEdit.id ? 'Update' : 'Create' }}
+            @click="validForm"
+        >
+            {{ taskToEdit.id ? 'Update' : 'Create' }}
         </v-btn>
     </div>
 </template>
@@ -77,8 +75,8 @@ const resetTaskForm = () => {
     taskStore.resetTaskToEdit()
     emits('close')
 }
-const validForm = () => {
-    const validation = taskForm.value?.validate()
+const validForm = async () => {
+    const validation = await taskForm.value?.validate()
     if (!validation?.valid) return
     isLoading.value = true
     if (taskToEdit.value.id) updateTask()
