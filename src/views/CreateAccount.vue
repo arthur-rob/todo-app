@@ -46,9 +46,9 @@
                     hint="Password must be at least 8 characters long"
                     :type="isPasswordVisible ? 'text' : 'password'"
                     :rules="[
-                        isPasswordLongEnough ||
+                        (v) =>
+                            isPasswordLongEnough(v) ||
                             'Password must be at least 8 characters long',
-                        isStringValid || 'Password is required',
                     ]"
                     :append-inner-icon="
                         isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'
@@ -63,7 +63,7 @@
                     density="compact"
                     label="Confirm Password"
                     :type="isPasswordVisible ? 'text' : 'password'"
-                    :rules="[isPasswordConfirmed || 'password mismatch']"
+                    :rules="[isPasswordConfirmed || 'Password mismatch']"
                     :append-inner-icon="
                         isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'
                     "
@@ -71,16 +71,16 @@
                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 >
                 </v-text-field>
-                <div class="btn-aligner d-flex justify-end my-4">
-                    <v-btn
-                        variant="tonal"
-                        color="primary"
-                        @click="handleCreateAccount"
-                    >
-                        Create Account
-                    </v-btn>
-                </div>
             </v-form>
+            <template #actions>
+                <v-btn
+                    variant="tonal"
+                    color="primary"
+                    @click="handleCreateAccount"
+                >
+                    Create Account
+                </v-btn>
+            </template>
         </InputCard>
         <p class="ma-2">
             Already have an account ? Go to

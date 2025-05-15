@@ -6,5 +6,9 @@
         max-width="600"
     >
         <slot> </slot>
+
+        <div class="btn-aligner d-flex justify-end my-2">
+            <slot name="actions"></slot>
+        </div>
     </v-card>
 </template>
