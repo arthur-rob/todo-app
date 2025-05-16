@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia'
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import Api from '../lib/Api'
 import type { Task } from '../types/Task.d.ts'
 import { DEFAULT_TASK } from '../constants/task'
 
 export const useTaskStore = defineStore('task', () => {
-    const myTasks = reactive<Task[]>([])
+    const myTasks = ref<Task[]>([])
     const taskToEdit = ref<Task>({ ...DEFAULT_TASK })
 
     const getMyTasks = async (): Promise<Task[] | undefined> => {
         try {
             const response = await Api.get('/task/me')
-            myTasks.splice(0, myTasks.length, ...response.data)
+            myTasks.value = response.data
             return []
         } catch (error) {
             console.error('Error fetching tasks:', error)
@@ -20,7 +20,7 @@ export const useTaskStore = defineStore('task', () => {
     const createTask = async (task: Task): Promise<Task | undefined> => {
         try {
             const response = await Api.post('/task', task)
-            myTasks.push(response.data)
+            myTasks.value.push(response.data)
             return response.data
         } catch (error) {
             console.error('Error creating task:', error)
@@ -29,9 +29,9 @@ export const useTaskStore = defineStore('task', () => {
     const updateTask = async (task: Task): Promise<Task | undefined> => {
         try {
             const response = await Api.patch(`/task/${task.id}`, task)
-            const taskIndex = myTasks.findIndex((t) => t.id === task.id)
+            const taskIndex = myTasks.value.findIndex((t) => t.id === task.id)
             if (taskIndex !== -1) {
-                myTasks[taskIndex] = response.data
+                myTasks.value[taskIndex] = response.data
             }
             return response.data
         } catch (error) {
@@ -41,9 +41,9 @@ export const useTaskStore = defineStore('task', () => {
     const deleteTask = async (taskId: number): Promise<Task | undefined> => {
         try {
             await Api.delete(`/task/${taskId}`)
-            const taskIndex = myTasks.findIndex((t) => t.id === taskId)
+            const taskIndex = myTasks.value.findIndex((t) => t.id === taskId)
             if (taskIndex !== -1) {
-                myTasks.splice(taskIndex, 1)
+                myTasks.value.splice(taskIndex, 1)
             }
             return
         } catch (error) {

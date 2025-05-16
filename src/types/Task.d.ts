@@ -5,4 +5,5 @@ export interface Task {
     isCompleted: boolean
     expireAt?: Date
     id?: number
+    createdAt?: Date
 }

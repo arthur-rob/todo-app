@@ -37,8 +37,17 @@
             v-model="taskToEdit.expireAt"
             density="compact"
             variant="outlined"
-            label="Date"
+            label="Expire Date"
         />
+        <v-date-input
+            v-if="taskToEdit.createdAt"
+            v-model="taskToEdit.createdAt"
+            disabled
+            density="compact"
+            variant="outlined"
+            label="Created At"
+        />
+        
     </v-form>
 
     <v-divider></v-divider>

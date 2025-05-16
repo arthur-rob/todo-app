@@ -6,6 +6,7 @@
                     <h4>My Tasks List</h4>
                 </div>
                 <v-divider></v-divider>
+                <TaskList />
             </template>
         </v-navigation-drawer>
         <v-card class="dashboard elevation-0">
@@ -57,6 +58,7 @@
 <script setup lang="ts">
 import TaskForm from '../components/TaskForm.vue'
 import TaskCard from '../components/TaskCard.vue'
+import TaskList from '../components/TaskList.vue'
 import { ref } from 'vue'
 import { useAuthStore } from '../store/auth'
 import { useTaskStore } from '../store/task'
