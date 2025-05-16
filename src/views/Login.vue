@@ -59,8 +59,8 @@ const router = useRouter()
 const isPasswordVisible = ref(false)
 const isLoading = ref(false)
 const loginForm = ref<VForm>()
-const email = ref('arthur.ro923@gmail.com')
-const password = ref('N4G@Qb7bR3Hq5D@y')
+const email = ref('')
+const password = ref('')
 
 const handleLogin = async () => {
     const formValidation = await loginForm.value?.validate()

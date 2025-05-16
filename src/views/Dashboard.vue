@@ -1,12 +1,13 @@
 <template>
     <v-layout>
         <v-navigation-drawer permanent width="200">
-            <div class="d-flex align-center justify-space-between pa-2 list-header">
+            <div
+                class="d-flex align-center justify-space-between pa-2 list-header"
+            >
                 <h3>{{ authStore.user?.firstName }} Task List</h3>
             </div>
             <v-divider></v-divider>
             <TaskList />
-        
         </v-navigation-drawer>
         <v-card class="dashboard elevation-0">
             <template #prepend>
@@ -113,7 +114,7 @@ listStore.getMyList()
     height: 100%;
     padding-left: 200px;
 }
-.list-header{
+.list-header {
     height: 56px;
 }
 </style>
