@@ -6,4 +6,5 @@ export interface Task {
     expireAt?: Date
     id?: number
     createdAt?: Date
+    list?: number
 }

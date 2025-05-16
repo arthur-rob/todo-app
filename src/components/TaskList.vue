@@ -83,7 +83,6 @@ const listStore = useListStore()
 const listToDelete = ref<List | null>(null)
 const indexStore = useIndexStore()
 
-listStore.getMyList()
 
 const displayDeleteModal = (list: List) => {
     listToDelete.value = list

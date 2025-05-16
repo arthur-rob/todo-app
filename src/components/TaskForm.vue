@@ -47,7 +47,6 @@
             variant="outlined"
             label="Created At"
         />
-        
     </v-form>
 
     <v-divider></v-divider>
@@ -94,6 +93,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { isStringValid } from '../lib/Validators'
+import { useListStore } from '../store/list'
 import { useIndexStore } from '../store'
 import { useTaskStore } from '../store/task'
 import type { Task } from '../types/Task'
@@ -103,6 +103,7 @@ const taskStore = useTaskStore()
 const taskToEdit = ref<Task>(taskStore.taskToEdit)
 const taskForm = ref<VForm>()
 const indexStore = useIndexStore()
+const listStore = useListStore()
 const isDeleteModalOpen = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 const emits = defineEmits<{
@@ -117,6 +118,7 @@ const validForm = async () => {
     const validation = await taskForm.value?.validate()
     if (!validation?.valid) return
     isLoading.value = true
+    taskToEdit.value.list = listStore.activeList.id
     if (taskToEdit.value.id) updateTask()
     else createTask()
 }

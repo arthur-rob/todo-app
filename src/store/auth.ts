@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('auth', () => {
     const syncProfile = async (): Promise<User | undefined> => {
         try {
             const response = await Api.get('/auth/profile')
-            user.value = response.data.user
+            user.value = response.data
             return user.value
         } catch (error) {
             if ((error as AxiosError).response?.status === 401) {

@@ -2,16 +2,18 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import Api from '../lib/Api'
 import type { List } from '../types/List'
-
+import { useTaskStore } from './task'
 export const useListStore = defineStore('list', () => {
     const taskLists = ref<List[]>([])
 
     const activeList = ref<List>()
+    const taskStore = useTaskStore()
 
     const getMyList = async (): Promise<List[] | undefined> => {
         try {
             const response = await Api.get('/list/me')
             taskLists.value = response.data
+            if (taskLists.value.length > 0) setSelectedList(taskLists.value[0].id)
             return taskLists.value
         } catch (error) {
             console.error('Error fetching tasks:', error)
@@ -33,8 +35,12 @@ export const useListStore = defineStore('list', () => {
         try {
             await Api.delete(`/list/${listId}`)
             const listIndex = taskLists.value.findIndex((t) => t.id === listId)
-            if (listIndex !== -1) {
-                taskLists.value.splice(listIndex, 1)
+            if (listIndex !== -1) taskLists.value.splice(listIndex, 1)
+            if (taskLists.value.length > 0) {
+                setSelectedList(taskLists.value[0].id)
+            } else {
+                activeList.value = null
+                taskStore.tasks = []
             }
             return
         } catch (error) {
@@ -46,7 +52,9 @@ export const useListStore = defineStore('list', () => {
         activeList.value = taskLists.value.find((list) => list.id === listId)
         if (!activeList.value) {
             console.error('List not found')
+            return
         }
+        taskStore.getTasksByList(activeList.value.id)
     }
 
     return {

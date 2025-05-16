@@ -5,22 +5,33 @@ import type { Task } from '../types/Task.d.ts'
 import { DEFAULT_TASK } from '../constants/task'
 
 export const useTaskStore = defineStore('task', () => {
-    const myTasks = ref<Task[]>([])
+    const tasks = ref<Task[]>([])
     const taskToEdit = ref<Task>({ ...DEFAULT_TASK })
 
     const getMyTasks = async (): Promise<Task[] | undefined> => {
         try {
             const response = await Api.get('/task/me')
-            myTasks.value = response.data
-            return []
+            tasks.value = response.data
+            return tasks.value
         } catch (error) {
             console.error('Error fetching tasks:', error)
         }
     }
+
+    const getTasksByList = async (id: number): Promise<Task[] | undefined> => {
+        try {
+            const response = await Api.get(`/task/list/${id}`)
+            tasks.value = response.data
+            return tasks.value
+        } catch (error) {
+            console.error('Error fetching tasks:', error)
+        }
+    }
+
     const createTask = async (task: Task): Promise<Task | undefined> => {
         try {
             const response = await Api.post('/task', task)
-            myTasks.value.push(response.data)
+            tasks.value.push(response.data)
             return response.data
         } catch (error) {
             console.error('Error creating task:', error)
@@ -29,9 +40,9 @@ export const useTaskStore = defineStore('task', () => {
     const updateTask = async (task: Task): Promise<Task | undefined> => {
         try {
             const response = await Api.patch(`/task/${task.id}`, task)
-            const taskIndex = myTasks.value.findIndex((t) => t.id === task.id)
+            const taskIndex = tasks.value.findIndex((t) => t.id === task.id)
             if (taskIndex !== -1) {
-                myTasks.value[taskIndex] = response.data
+                tasks.value[taskIndex] = response.data
             }
             return response.data
         } catch (error) {
@@ -41,9 +52,9 @@ export const useTaskStore = defineStore('task', () => {
     const deleteTask = async (taskId: number): Promise<Task | undefined> => {
         try {
             await Api.delete(`/task/${taskId}`)
-            const taskIndex = myTasks.value.findIndex((t) => t.id === taskId)
+            const taskIndex = tasks.value.findIndex((t) => t.id === taskId)
             if (taskIndex !== -1) {
-                myTasks.value.splice(taskIndex, 1)
+                tasks.value.splice(taskIndex, 1)
             }
             return
         } catch (error) {
@@ -55,12 +66,13 @@ export const useTaskStore = defineStore('task', () => {
         taskToEdit.value = { ...DEFAULT_TASK }
     }
     return {
-        myTasks,
+        tasks,
         getMyTasks,
         createTask,
         updateTask,
         taskToEdit,
         deleteTask,
         resetTaskToEdit,
+        getTasksByList,
     }
 })
