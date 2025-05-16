@@ -1,13 +1,12 @@
 <template>
     <v-layout>
         <v-navigation-drawer permanent width="200">
-            <template #prepend>
-                <div class="d-flex align-center justify-space-between pa-4">
-                    <h3>{{ authStore.user?.firstName }} Task List</h3>
-                </div>
-                <v-divider></v-divider>
-                <TaskList />
-            </template>
+            <div class="d-flex align-center justify-space-between pa-2 list-header">
+                <h3>{{ authStore.user?.firstName }} Task List</h3>
+            </div>
+            <v-divider></v-divider>
+            <TaskList />
+        
         </v-navigation-drawer>
         <v-card class="dashboard elevation-0">
             <template #prepend>
@@ -24,9 +23,7 @@
                 </v-btn>
             </template>
             <v-divider></v-divider>
-            <div
-                class="task-wrapper d-flex flex-wrap pa-2"
-            >
+            <div class="task-wrapper d-flex flex-wrap pa-2">
                 <TaskCard
                     v-for="task in taskStore.tasks"
                     :key="task.id"
@@ -35,14 +32,32 @@
                 >
                 </TaskCard>
             </div>
-            
-            <div class="rounded bg-blue-grey-lighten-5 d-flex flex-wrap pa-2 ma-4" v-if="!listStore.activeList">
-                <v-icon icon="mdi-alert-box" color="warning" class="mr-2"></v-icon> 
-                <p class="text-subtitle-1">To create or edit task, please select or create a list.</p>
+
+            <div
+                class="rounded bg-blue-grey-lighten-5 d-flex flex-wrap pa-2 ma-4"
+                v-if="!listStore.activeList"
+            >
+                <v-icon
+                    icon="mdi-alert-box"
+                    color="warning"
+                    class="mr-2"
+                ></v-icon>
+                <p class="text-subtitle-1">
+                    To create or edit task, please select or create a list.
+                </p>
             </div>
-            <div class=" d-flex flex-wrap pa-2 ma-4" v-else-if="taskStore.tasks.length == 0">
-                <v-btn variant="tonal" color="primary" @click="createNewTask" append-icon="mdi-arrow-right"> Create My First Task</v-btn>
-                
+            <div
+                class="d-flex flex-wrap pa-2 ma-4"
+                v-else-if="taskStore.tasks.length == 0"
+            >
+                <v-btn
+                    variant="tonal"
+                    color="primary"
+                    @click="createNewTask"
+                    append-icon="mdi-arrow-right"
+                >
+                    Create My First Task</v-btn
+                >
             </div>
         </v-card>
         <v-navigation-drawer
@@ -97,5 +112,8 @@ listStore.getMyList()
     width: 100%;
     height: 100%;
     padding-left: 200px;
+}
+.list-header{
+    height: 56px;
 }
 </style>

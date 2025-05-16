@@ -13,7 +13,8 @@ export const useListStore = defineStore('list', () => {
         try {
             const response = await Api.get('/list/me')
             taskLists.value = response.data
-            if (taskLists.value.length > 0) setSelectedList(taskLists.value[0].id)
+            if (taskLists.value.length > 0)
+                setSelectedList(taskLists.value[0].id)
             return taskLists.value
         } catch (error) {
             console.error('Error fetching tasks:', error)

@@ -25,12 +25,13 @@
         <v-list-item v-if="listStore.taskLists.length === 0">
             <p class="text-center">No lists available</p>
         </v-list-item>
-        <v-list-item-action class="d-flex align-center justify-end">
+        <v-list-item-action class="d-flex align-center justify-end my-2">
             <v-text-field
                 v-model="listToAdd"
                 variant="outlined"
                 density="compact"
                 label="New List"
+                class="mr-2"
                 hide-details
                 counter
                 :maxlength="100"
@@ -82,7 +83,6 @@ const isDeleteModalOpen = ref<boolean>(false)
 const listStore = useListStore()
 const listToDelete = ref<List | null>(null)
 const indexStore = useIndexStore()
-
 
 const displayDeleteModal = (list: List) => {
     listToDelete.value = list
