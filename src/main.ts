@@ -6,6 +6,7 @@ import { createApp } from 'vue'
 import { createVuetify } from 'vuetify'
 import { createPinia } from 'pinia'
 import { useAuthStore } from './store/auth'
+import { VDateInput } from 'vuetify/labs/VDateInput'
 import '@mdi/font/css/materialdesignicons.css'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -13,7 +14,10 @@ import * as directives from 'vuetify/directives'
 const app = createApp(App)
 const pinia = createPinia()
 const vuetify = createVuetify({
-    components,
+    components: {
+        ...components,
+        VDateInput,
+    },
     directives,
     icons: {
         defaultSet: 'mdi',

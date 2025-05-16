@@ -128,21 +128,13 @@ const handleCreateAccount = async () => {
     isLoading.value = true
     try {
         await Api.post('/users', newAccountForm)
-        indexStore.snackbarConfig = {
-            message: 'Account Created !',
-            type: 'success',
-            display: true,
-        }
+        indexStore.displaySnackBar('Account Created !')
         router.push('/')
     } catch (error) {
         const errorMessage =
             error.response?.data?.message ||
             'An error occurred, try again later'
-        indexStore.snackbarConfig = {
-            message: errorMessage,
-            type: 'error',
-            display: true,
-        }
+        indexStore.displaySnackBar(errorMessage, 'error')
     } finally {
         isLoading.value = false
     }
