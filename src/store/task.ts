@@ -38,6 +38,18 @@ export const useTaskStore = defineStore('task', () => {
             console.error('Error creating task:', error)
         }
     }
+    const deleteTask = async (taskId: number): Promise<Task | undefined> => {
+        try {
+            await Api.delete(`/task/${taskId}`)
+            const taskIndex = myTasks.findIndex((t) => t.id === taskId)
+            if (taskIndex !== -1) {
+                myTasks.splice(taskIndex, 1)
+            }
+            return
+        } catch (error) {
+            console.error('Error creating task:', error)
+        }
+    }
 
     const resetTaskToEdit = () => {
         taskToEdit.value = { ...DEFAULT_TASK }
@@ -48,6 +60,7 @@ export const useTaskStore = defineStore('task', () => {
         createTask,
         updateTask,
         taskToEdit,
+        deleteTask,
         resetTaskToEdit,
     }
 })

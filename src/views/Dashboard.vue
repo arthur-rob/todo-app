@@ -30,7 +30,6 @@
                     :key="task.id"
                     :task="task"
                     @click="setTaskToEdit(task)"
-                    @delete-task="taskStore.deleteTask(task.id)"
                 >
                 </TaskCard>
             </div>

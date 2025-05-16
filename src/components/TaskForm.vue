@@ -45,6 +45,15 @@
     <div class="d-flex align-center justify-end pa-2">
         <v-btn class="ma-2" @click="resetTaskForm"> close </v-btn>
         <v-btn
+            v-if="taskToEdit.id"
+            class="ma-2"
+            variant="tonal"
+            color="error"
+            @click="isDeleteModalOpen = true"
+        >
+            Delete
+        </v-btn>
+        <v-btn
             class="ma-2"
             color="primary"
             :loading="isLoading"
@@ -53,6 +62,25 @@
             {{ taskToEdit.id ? 'Update' : 'Create' }}
         </v-btn>
     </div>
+    <v-dialog v-model="isDeleteModalOpen" max-width="500" title="Delete Task">
+        <v-card>
+            <v-card-text>
+                <p>Are you sure you want to delete this task?</p>
+                <p class="">{{ taskToEdit.title }}</p>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text @click="isDeleteModalOpen = false">Cancel</v-btn>
+                <v-btn
+                    color="error"
+                    variant="elevated"
+                    :loading="isLoading"
+                    @click="deleteTask(taskToEdit.id)"
+                    >Delete</v-btn
+                >
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
@@ -66,6 +94,7 @@ const taskStore = useTaskStore()
 const taskToEdit = ref<Task>(taskStore.taskToEdit)
 const taskForm = ref<VForm>()
 const indexStore = useIndexStore()
+const isDeleteModalOpen = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 const emits = defineEmits<{
     (e: 'close'): void
@@ -106,6 +135,22 @@ const updateTask = async () => {
         const errorMessage =
             error.response?.data?.message ||
             'An error occurred updating task, try again later'
+        indexStore.displaySnackBar(errorMessage, 'error')
+    } finally {
+        isLoading.value = false
+    }
+}
+const deleteTask = async (taskId: number) => {
+    isLoading.value = true
+    try {
+        await taskStore.deleteTask(taskId)
+        indexStore.displaySnackBar('Task Deleted successfully')
+        isDeleteModalOpen.value = false
+        resetTaskForm()
+    } catch (error) {
+        const errorMessage =
+            error.response?.data?.message ||
+            'An error occurred Deleting task, try again later'
         indexStore.displaySnackBar(errorMessage, 'error')
     } finally {
         isLoading.value = false
